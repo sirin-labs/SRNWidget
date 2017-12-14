@@ -14,15 +14,15 @@ class RequestBuilder {
 
     init {
         val retrofit = Retrofit.Builder()
-                .baseUrl("https://www.reddit.com")
+                .baseUrl("https://value.sirinlabs.com")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build()
 
         requestService = retrofit.create(RequestService::class.java)
     }
 
-    fun getNews(after: String, limit: String): Call<RedditNewsResponse> {
-        return requestService!!.getTop(after, limit)
+    fun getNews(): Call<RedditNewsResponse> {
+        return requestService!!.getMoney()
     }
 
 }

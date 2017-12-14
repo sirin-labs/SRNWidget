@@ -9,8 +9,7 @@ import retrofit2.http.Query
 import widget.sirinlabs.com.crowdsale.model.RedditNewsResponse
 
 interface RequestService {
-    @GET("/top.json")
-    fun getTop(@Query("after") after: String,
-               @Query("limit") limit: String)
+    @GET("/value.json")
+    fun getMoney()
             : Call<RedditNewsResponse>;
 }

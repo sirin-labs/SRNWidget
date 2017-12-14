@@ -12,7 +12,7 @@ fun fetchData() : Observable<Response<RedditNewsResponse>>? {
 
     var observable = Observable.just(RequestBuilder()).map { builder ->
 
-        val callResponse = builder.getNews("", "")
+        val callResponse = builder.getNews()
         val response = callResponse.execute()
 
         return@map response

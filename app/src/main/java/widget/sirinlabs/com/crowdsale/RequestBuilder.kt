@@ -3,7 +3,7 @@ package widget.sirinlabs.com.crowdsale
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import widget.sirinlabs.com.crowdsale.model.RedditNewsResponse
+import widget.sirinlabs.com.crowdsale.model.SRNResponse
 
 /**
  * Created by yaron on 30/11/17.
@@ -21,7 +21,7 @@ class RequestBuilder {
         requestService = retrofit.create(RequestService::class.java)
     }
 
-    fun getNews(): Call<RedditNewsResponse> {
+    fun getNews(): Call<SRNResponse> {
         return requestService!!.getMoney()
     }
 

@@ -5,11 +5,10 @@ package widget.sirinlabs.com.crowdsale
  */
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Query
-import widget.sirinlabs.com.crowdsale.model.RedditNewsResponse
+import widget.sirinlabs.com.crowdsale.model.SRNResponse
 
 interface RequestService {
     @GET("/value.json")
     fun getMoney()
-            : Call<RedditNewsResponse>;
+            : Call<SRNResponse>;
 }

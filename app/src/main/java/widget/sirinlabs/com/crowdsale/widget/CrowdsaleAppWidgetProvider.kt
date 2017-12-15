@@ -6,6 +6,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.RemoteViews
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import widget.sirinlabs.com.crowdsale.R
 import widget.sirinlabs.com.crowdsale.fetchData
 import java.util.concurrent.TimeUnit
@@ -26,16 +27,16 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         val remoteViews = RemoteViews(context!!.packageName,
                 R.layout.appwidget)
 
-        val subscribeBy = fetchData()!!.repeatWhen { completed -> completed.delay(40, TimeUnit.SECONDS) }.subscribeBy(onNext = { SirinValueResponse->
+        fetchData()!!.observeOn(Schedulers.io()).retry().repeatWhen { completed -> completed.delay(40, TimeUnit.SECONDS) }.subscribeBy(onNext = { SirinValueResponse->
             if(SirinValueResponse.isSuccessful)
             {
-                Log.d("gilad","value:" + SirinValueResponse.body().value)
+                Log.d(TAG,"value:" + SirinValueResponse.body().value)
                 remoteViews.setTextViewText(R.id.text_view, SirinValueResponse.body().value)
                 appWidgetManager!!.updateAppWidget(appWidgetIds!![0],remoteViews)
             }
         },onError = {Throwable->
             Log.e(TAG,Throwable.message)
-        });
+        })
 
     }
 

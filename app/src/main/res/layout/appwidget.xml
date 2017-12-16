@@ -1,21 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/bg"
                 android:layout_width="220dp"
-                android:layout_height="200dp">
+                android:layout_height="130dp">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
+        android:id="@+id/srn_circle"
         android:src="@mipmap/shield_inv"/>
 
     <TextView
-        android:id="@+id/text_view"
+        android:id="@+id/dollar_raised"
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:textColor="@android:color/background_light"/>
+        android:textColor="@android:color/background_light"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:max="500"
+        android:progress="0"
+        android:progressDrawable="@drawable/circular"/>
+
+    <TextView
+        android:id="@+id/update_time"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/srn_circle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="42dp"
+        android:text="please wait"
+        android:gravity="center"
+        android:textColor="@android:color/background_light"
+        android:textSize="8sp"/>
+
 
 </RelativeLayout>

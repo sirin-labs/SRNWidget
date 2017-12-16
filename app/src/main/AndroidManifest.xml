@@ -19,6 +19,9 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".widget.SRNWidgetService"></service>
+
+
         <receiver android:name=".widget.CrowdsaleAppWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

@@ -1,13 +1,15 @@
 package widget.sirinlabs.com.crowdsale.widget
 
-import android.app.AlarmManager
+import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
 import android.content.Intent
-import android.os.SystemClock
+import android.os.PersistableBundle
 import android.widget.RemoteViews
 import widget.sirinlabs.com.crowdsale.MainActivity
 import widget.sirinlabs.com.crowdsale.R
@@ -22,16 +24,10 @@ import widget.sirinlabs.com.crowdsale.R
 class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
 
     val TAG: String = "CrowdsaleAppWidget"
-    private lateinit var service:PendingIntent
-    private var alarmManager: AlarmManager? = null
-
-    override fun onEnabled(context: Context?) {
-        super.onEnabled(context)
-    }
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        startPeriodricUpdates(context, appWidgetIds)
+        startPeriodricUpdates(context!!, appWidgetIds)
         setClick(context, appWidgetManager, appWidgetIds)
     }
 
@@ -44,10 +40,21 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         appWidgetManager?.updateAppWidget(appWidgetIds!![0], remoteViews)
     }
 
-    private fun startPeriodricUpdates(context: Context?, appWidgetIds: IntArray?) {
-        alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, SRNWidgetService::class.java).putExtra("id", appWidgetIds!![0])
-        service = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        alarmManager?.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), 60000, service);
+    @SuppressLint("NewApi")
+    private fun startPeriodricUpdates(context: Context, appWidgetIds: IntArray?) {
+        val serviceComponent = ComponentName(context, SRNWidgetService::class.java)
+        val builder = JobInfo.Builder(0, serviceComponent)
+
+        builder.setPersisted(true)
+        builder.setMinimumLatency(0) // wait at least
+        builder.setOverrideDeadline(0) // maximum delay
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // require unmetered network
+        builder.setPeriodic(5000)
+        val bundle = PersistableBundle()
+        bundle.putInt("id",appWidgetIds!![0])
+        builder.setExtras(bundle)
+
+        val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        jobScheduler.schedule(builder.build())
     }
 }

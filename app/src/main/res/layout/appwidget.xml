@@ -10,7 +10,7 @@
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
         android:id="@+id/srn_circle"
-        android:src="@mipmap/shield_inv"/>
+        android:src="@mipmap/shield"/>
 
     <TextView
         android:id="@+id/dollar_raised"

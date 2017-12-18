@@ -10,5 +10,5 @@ import widget.sirinlabs.com.crowdsale.model.SRNResponse
 interface RequestService {
     @GET("/value.json")
     fun getMoney()
-            : Call<SRNResponse>;
+            : Call<SRNResponse>
 }

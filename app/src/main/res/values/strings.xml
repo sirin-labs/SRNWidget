@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">SirinLabs</string>
-    <string name="sirin_labs">https://sirinlabs.com</string>
+    <string name="sirin_labs">https://value.sirinlabs.com/value.json</string>
+    <string name="eth_in_usd_format">1eth=%1$s$</string>
+    <string name="please_wait">please wait</string>
+
 </resources>

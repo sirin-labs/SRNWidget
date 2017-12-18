@@ -27,22 +27,39 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        startPeriodricUpdates(context!!, appWidgetIds)
+        startPeriodicUpdates(context, appWidgetIds)
         setClick(context, appWidgetManager, appWidgetIds)
     }
 
     private fun setClick(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
-        val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        clickOnUpd(context, appWidgetManager)
+        clickExpand(context, appWidgetManager)
+    }
 
+    private fun clickExpand(context: Context?,appWidgetManager: AppWidgetManager?) {
         val remoteViews = RemoteViews(context?.packageName, R.layout.appwidget)
+        val activityIntent = Intent(context, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, 0)
         remoteViews.setOnClickPendingIntent(R.id.bg, pendingIntent)
-        appWidgetManager?.updateAppWidget(appWidgetIds!![0], remoteViews)
+
+        val thisWidget = ComponentName(context, CrowdsaleAppWidgetProvider::class.java)
+
+        appWidgetManager?.updateAppWidget(thisWidget, remoteViews)
+    }
+
+    private fun clickOnUpd(context: Context?, appWidgetManager: AppWidgetManager?) {
+        val remoteViews = RemoteViews(context?.packageName, R.layout.appwidget)
+        val serviceIntent = Intent(context, SingleWidgetUpdateIntentService::class.java)
+        val pendingIntent = PendingIntent.getService(context, 0, serviceIntent, 0)
+        remoteViews.setOnClickPendingIntent(R.id.progressBarShadow, pendingIntent)
+        val thisWidget = ComponentName(context, CrowdsaleAppWidgetProvider::class.java)
+
+        appWidgetManager?.updateAppWidget(thisWidget, remoteViews)
     }
 
     @SuppressLint("NewApi")
-    private fun startPeriodricUpdates(context: Context, appWidgetIds: IntArray?) {
-        val serviceComponent = ComponentName(context, SRNWidgetService::class.java)
+    private fun startPeriodicUpdates(context: Context?, appWidgetIds: IntArray?) {
+        val serviceComponent = ComponentName(context, PeriodricWidgetUpdateJobService::class.java)
         val builder = JobInfo.Builder(0, serviceComponent)
 
         builder.setPersisted(true)
@@ -54,7 +71,7 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         bundle.putInt("id",appWidgetIds!![0])
         builder.setExtras(bundle)
 
-        val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val jobScheduler = context?.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         jobScheduler.schedule(builder.build())
     }
 }

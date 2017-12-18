@@ -15,15 +15,16 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <service
-            android:name=".widget.SRNWidgetService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            />
+            android:name=".widget.PeriodricWidgetUpdateJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <service
+            android:name=".widget.SingleWidgetUpdateIntentService"/>
 
 
         <receiver android:name=".widget.CrowdsaleAppWidgetProvider">

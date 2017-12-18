@@ -18,12 +18,37 @@
         style="?android:attr/progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/ether_raised"
+        android:layout_above="@id/eth_in_usd"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="7.5dp"
         android:max="500"
         android:progress="0"
         android:progressDrawable="@drawable/circular"/>
+
+    <RelativeLayout
+        android:id="@+id/progressBarShadow"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_above="@id/eth_in_usd"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="15dp">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/circle"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/eth_in_usd"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ether_raised"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="2dp"
+        android:textSize="@dimen/small_text"/>
 
     <TextView
         android:id="@+id/ether_raised"
@@ -33,7 +58,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="2dp"
         android:gravity="center"
-        android:textColor="@android:color/background_light"/>
+        android:textColor="@android:color/background_light"
+        android:textSize="@dimen/text_big"/>
 
     <ImageView
         android:id="@+id/pivot"
@@ -49,7 +75,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
         android:gravity="center"
-        android:textColor="@android:color/background_light"/>
+        android:textColor="@android:color/background_light"
+        android:textSize="@dimen/text_big"/>
 
     <TextView
         android:id="@+id/update_time"
@@ -59,9 +86,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
         android:gravity="center"
-        android:textSize="10sp"
-        android:text="please wait"
-        android:textColor="@android:color/background_light"/>
+        android:text="@string/please_wait"
+        android:textColor="@android:color/background_light"
+        android:textSize="@dimen/small_text"/>
 
 
 </RelativeLayout>

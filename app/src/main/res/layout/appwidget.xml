@@ -1,47 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/bg"
-                android:layout_width="220dp"
-                android:layout_height="130dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
 
     <ImageView
+        android:id="@+id/frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
-        android:id="@+id/srn_circle"
-        android:src="@mipmap/shield"/>
-
-    <TextView
-        android:id="@+id/dollar_raised"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:textColor="@android:color/background_light"
-        android:visibility="gone"/>
+        android:src="@drawable/token_simplified"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_above="@id/ether_raised"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="2dp"
         android:max="500"
         android:progress="0"
         android:progressDrawable="@drawable/circular"/>
 
     <TextView
-        android:id="@+id/update_time"
+        android:id="@+id/ether_raised"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/srn_circle"
+        android:layout_alignBottom="@id/pivot"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="42dp"
-        android:text="please wait"
+        android:layout_marginBottom="2dp"
         android:gravity="center"
-        android:textColor="@android:color/background_light"
-        android:textSize="8sp"/>
+        android:textColor="@android:color/background_light"/>
+
+    <ImageView
+        android:id="@+id/pivot"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/dollar_raised"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/pivot"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:textColor="@android:color/background_light"/>
+
+    <TextView
+        android:id="@+id/update_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dollar_raised"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:textSize="10sp"
+        android:text="please wait"
+        android:textColor="@android:color/background_light"/>
 
 
 </RelativeLayout>

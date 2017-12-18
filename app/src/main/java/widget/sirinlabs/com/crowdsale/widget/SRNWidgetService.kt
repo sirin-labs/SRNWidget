@@ -11,6 +11,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import widget.sirinlabs.com.crowdsale.R
 import widget.sirinlabs.com.crowdsale.fetchData
+import java.text.DecimalFormat
 
 
 /**
@@ -29,7 +30,6 @@ class SRNWidgetService : JobService() {
     }
 
 
-
     private lateinit var mDisposable: Disposable
 
     private fun updateWidget(widgetId: Int?) {
@@ -37,12 +37,10 @@ class SRNWidgetService : JobService() {
                 .getInstance(applicationContext)
 
         val remoteViews = RemoteViews(application.packageName, R.layout.appwidget)
-        remoteViews.setViewVisibility(R.id.dollar_raised, View.GONE)
         remoteViews.setViewVisibility(R.id.progressBar, View.VISIBLE)
         appWidgetManager.updateAppWidget(widgetId!!, remoteViews)
 
         updateData(remoteViews, appWidgetManager, widgetId!!)
-        remoteViews.setViewVisibility(R.id.dollar_raised, View.VISIBLE)
         remoteViews.setViewVisibility(R.id.progressBar, View.GONE)
     }
 
@@ -51,7 +49,13 @@ class SRNWidgetService : JobService() {
                 .subscribeBy(onNext = { SirinValueResponse ->
                     if (SirinValueResponse.isSuccessful) {
                         Log.d(TAG, "value:" + SirinValueResponse.body().value)
-                        remoteViews.setTextViewText(R.id.dollar_raised, SirinValueResponse.body().value)
+                        val dollar = SirinValueResponse.body().value
+                        val amountFormatter = DecimalFormat("#,###,###")
+
+                        val ether:Int= SirinValueResponse.body().multisig_eth.toDouble().toInt() + SirinValueResponse.body().vault_eth.toDouble().toInt();
+                        remoteViews.setTextViewText(R.id.dollar_raised, dollar + "$")
+                        val str = amountFormatter.format(ether) + " ETH"
+                        remoteViews.setTextViewText(R.id.ether_raised, str)
                         remoteViews.setTextViewText(R.id.update_time, android.text.format.DateFormat.format("hh:mm a", java.util.Date()))
                         Log.d(TAG, "vault_eth:" + SirinValueResponse.body().vault_eth + "multisig_eth:" + SirinValueResponse.body().multisig_eth)
                         appWidgetManager!!.updateAppWidget(widgetId, remoteViews)

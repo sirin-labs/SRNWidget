@@ -49,7 +49,7 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         builder.setMinimumLatency(0) // wait at least
         builder.setOverrideDeadline(0) // maximum delay
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // require unmetered network
-        builder.setPeriodic(5000)
+        builder.setPeriodic(40000)
         val bundle = PersistableBundle()
         bundle.putInt("id",appWidgetIds!![0])
         builder.setExtras(bundle)

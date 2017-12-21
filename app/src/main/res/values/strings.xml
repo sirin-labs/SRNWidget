@@ -3,5 +3,13 @@
     <string name="sirin_labs">https://value.sirinlabs.com/value.json</string>
     <string name="eth_in_usd_format">1eth=%1$s$</string>
     <string name="please_wait">please wait</string>
+    <string name="ether_in_usd">Ether in usd:</string>
+    <string name="not_avalible">N/A</string>
+    <string name="fiat_raised">Fiat raised:</string>
+    <string name="multisig">Multisig:</string>
+    <string name="sirin_total_supply">SRN total supply:</string>
+    <string name="ether_total_value">Ether total value:</string>
+    <string name="vault_total_ether">Vault total ether:</string>
+    <string name="total_raised">Total USD raised:</string>
 
 </resources>

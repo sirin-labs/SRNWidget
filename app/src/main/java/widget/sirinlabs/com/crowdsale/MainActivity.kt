@@ -2,16 +2,12 @@ package widget.sirinlabs.com.crowdsale
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.TextView
-import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONObject
 
 
 class MainActivity : AppCompatActivity() {
-    private var textView: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,10 +18,14 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         fetchData()!!.observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = { SirinValueResponse ->
-                    val gson = Gson()
-                    val j = JSONObject(gson.toJson(SirinValueResponse.body()))
-                    json.text = formatString(j.toString())
-
+                    val totalEther = SirinValueResponse.body().multisig_eth.toDouble() + SirinValueResponse.body().vault_eth.toDouble()
+                    ether_raised.text = totalEther.toInt().toString()
+                    eth_in_usd.text = SirinValueResponse.body().ethusd.toDouble().toInt().toString()
+                    fiat_raised.text = SirinValueResponse.body().fiat_usd
+                    multisig.text = SirinValueResponse.body().multisig_eth.toDouble().toInt().toString()
+                    sirin_total_supply.text = SirinValueResponse.body().srn_total_supply_wei.toDouble().toInt().toString()
+                    total_ether.text = SirinValueResponse.body().value
+                    vault_total_ether.text = SirinValueResponse.body().vault_eth.toDouble().toInt().toString()
                 })
     }
 

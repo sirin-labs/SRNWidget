@@ -1,5 +1,6 @@
 package widget.sirinlabs.com.crowdsale
 
+import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
@@ -16,7 +17,7 @@ fun fetchData() : Observable<Response<SRNResponse>>? {
         val response = callResponse.execute()
 
         return@map response
-    }.subscribeOn(Schedulers.io())
+    }.subscribeOn(Schedulers.io()).doOnError { Log.e("fetchData", it.message) }
 
     return observable
 

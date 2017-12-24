@@ -2,5 +2,5 @@
 <resources>
     <dimen name="small_text">10sp</dimen>
     <dimen name="text_big">16sp</dimen>
-    <dimen name="modifoer_width">200dp</dimen>
+    <dimen name="modifier_width">200dp</dimen>
 </resources>

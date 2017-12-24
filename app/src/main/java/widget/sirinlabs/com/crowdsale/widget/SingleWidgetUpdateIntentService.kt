@@ -41,35 +41,34 @@ class SingleWidgetUpdateIntentService : IntentService(SingleWidgetUpdateIntentSe
     }
 
     private fun updateData(remoteViews: RemoteViews, appWidgetManager: AppWidgetManager?, widgetId: ComponentName?) {
-        mDisposable = fetchData()!!.observeOn(AndroidSchedulers.mainThread())
+        fetchData()!!.observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { t: Disposable ->
+                    mDisposable = t
+                }
                 .subscribeBy(onNext = { SirinValueResponse ->
                     if (SirinValueResponse.isSuccessful) {
                         Log.d(SingleWidgetUpdateIntentService.TAG, "value:" + SirinValueResponse.body().value)
-                        val dollar = SirinValueResponse.body().value
-                        val amountFormatter = DecimalFormat("#,###,###")
-                        val ether:Int= SirinValueResponse.body().multisig_eth.toDouble().toInt() + SirinValueResponse.body().vault_eth.toDouble().toInt();
-                        remoteViews.setTextViewText(R.id.dollar_raised, dollar + "$")
-                        val str = amountFormatter.format(ether) + " ETH"
-                        remoteViews.setTextViewText(R.id.ether_raised, str)
-                        remoteViews.setTextViewText(R.id.eth_in_usd, String.format("%s ether=1$",SirinValueResponse.body().multisig_eth))
+
                         val res = resources
+                        val totalEtherRaised:Int= SirinValueResponse.body().multisig_eth.toDouble().toInt() + SirinValueResponse.body().vault_eth.toDouble().toInt()
+                        val amountFormatter = DecimalFormat(res.getString(R.string.readable_number))
+
+                        remoteViews.setTextViewText(R.id.dollar_raised, SirinValueResponse.body().value + " $")
+                        remoteViews.setTextViewText(R.id.ether_raised, amountFormatter.format(totalEtherRaised) + " eth")
                         remoteViews.setTextViewText(R.id.eth_in_usd, String.format(res.getString(R.string.eth_in_usd_format), SirinValueResponse.body().ethusd))
-                        remoteViews.setTextViewText(R.id.update_time, android.text.format.DateFormat.format("hh:mm a", java.util.Date()))
+                        remoteViews.setTextViewText(R.id.update_time, android.text.format.DateFormat.format(res.getString(R.string.time_short), java.util.Date()))
+                        remoteViews.setViewVisibility(R.id.progressBarShadow, View.VISIBLE)
+                        remoteViews.setViewVisibility(R.id.progressBar, View.INVISIBLE)
 
                         Log.d(SingleWidgetUpdateIntentService.TAG, "vault_eth:" + SirinValueResponse.body().vault_eth + "multisig_eth:" + SirinValueResponse.body().multisig_eth)
                         appWidgetManager!!.updateAppWidget(widgetId, remoteViews)
-
-                        remoteViews.setViewVisibility(R.id.progressBarShadow, View.VISIBLE)
-                        remoteViews.setViewVisibility(R.id.progressBar, View.INVISIBLE)
-                        appWidgetManager.updateAppWidget(widgetId!!, remoteViews)
-
-
-                        mDisposable.dispose()
                     } else {
                         Log.d(SingleWidgetUpdateIntentService.TAG, "not successful")
                     }
                 }, onError = { Throwable ->
                     Log.e(SingleWidgetUpdateIntentService.TAG, Throwable.message)
+                }, onComplete = {
+                    mDisposable.dispose()
                 })
     }
 

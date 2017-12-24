@@ -1,15 +1,34 @@
 <resources>
+    <string name="version_id">0.4</string>
+
+
+    //texts:
     <string name="app_name">SirinLabs</string>
-    <string name="sirin_labs">https://value.sirinlabs.com/value.json</string>
-    <string name="eth_in_usd_format">1eth=%1$s$</string>
+    <string name="version">version</string>
     <string name="please_wait">please wait</string>
-    <string name="ether_in_usd">Ether in usd:</string>
     <string name="not_avalible">N/A</string>
-    <string name="fiat_raised">Fiat raised:</string>
+
+    //modifiers
+    <string name="ether">Ether:</string>
+    <string name="total_raised_in_dollar">Total $ raised:</string>
+    <string name="Total_ether_raised">Total Ether Raised:</string>
+    <string name="fiat">Fiat raised:</string>
     <string name="multisig">Multisig:</string>
-    <string name="sirin_total_supply">SRN total supply:</string>
-    <string name="ether_total_value">Ether total value:</string>
-    <string name="vault_total_ether">Vault total ether:</string>
-    <string name="total_raised">Total USD raised:</string>
+    <string name="vault">Vault:</string>
+    <string name="SRN_total_supply">SRN total supply:</string>
+
+
+    //urls
+    <string name="sirin_labs">https://value.sirinlabs.com/value.json</string>
+
+    //formaters:
+    <string name="eth_in_usd_format">1eth=%1$s$</string>
+    <string name="eth_amount">%1$s eth</string>
+    <string name="srn_amount">%1$s srn</string>
+    <string name="dollar_amount">%1$s$</string>
+    <string name="readable_number">#,###,###</string>
+    <string name="time_short">hh:mm a</string>
+    <string name="preference_file_key">srn_widget</string>
+
 
 </resources>

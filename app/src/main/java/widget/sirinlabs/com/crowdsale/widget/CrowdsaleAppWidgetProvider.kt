@@ -9,7 +9,9 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.PersistableBundle
+import android.util.Log
 import android.widget.RemoteViews
 import widget.sirinlabs.com.crowdsale.MainActivity
 import widget.sirinlabs.com.crowdsale.R
@@ -31,6 +33,14 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         setClick(context, appWidgetManager, appWidgetIds)
     }
 
+    override fun onReceive(context: Context?, intent: Intent?) {
+        super.onReceive(context, intent)
+        Log.d(TAG,"onrecieve")
+        val activityIntent = Intent(context, MainActivity::class.java)
+        activityIntent.flags = FLAG_ACTIVITY_NEW_TASK
+        context?.startActivity(activityIntent, null)
+    }
+
     private fun setClick(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
         clickOnUpd(context, appWidgetManager)
         clickExpand(context, appWidgetManager)
@@ -38,8 +48,10 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
 
     private fun clickExpand(context: Context?,appWidgetManager: AppWidgetManager?) {
         val remoteViews = RemoteViews(context?.packageName, R.layout.appwidget)
-        val activityIntent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, 0)
+//        val activityIntent = Intent(context, MainActivity::class.java)
+        val activityIntent = Intent(context, CrowdsaleAppWidgetProvider::class.java)
+//        val pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, activityIntent, 0)
         remoteViews.setOnClickPendingIntent(R.id.bg, pendingIntent)
 
         val thisWidget = ComponentName(context, CrowdsaleAppWidgetProvider::class.java)

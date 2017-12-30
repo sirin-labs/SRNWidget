@@ -10,25 +10,26 @@
 
     //modifiers
     <string name="ether">Ether:</string>
+    <string name="eth">ETH</string>
+    <string name="srn">SRN</string>
     <string name="total_raised_in_dollar">Total $ raised:</string>
     <string name="Total_ether_raised">Total Ether Raised:</string>
     <string name="fiat">Fiat raised:</string>
     <string name="multisig">Multisig:</string>
     <string name="vault">Vault:</string>
     <string name="SRN_total_supply">SRN total supply:</string>
-
-
-    //urls
-    <string name="sirin_labs">https://value.sirinlabs.com/value.json</string>
+    <string name="VOL">vol</string>
 
     //formaters:
-    <string name="eth_in_usd_format">1eth=%1$s$</string>
+    <string name="in_usd_long_format">%1$.4f$</string>
+    <string name="in_usd_format">%1$.1f$</string>
     <string name="eth_amount">%1$s eth</string>
     <string name="srn_amount">%1$s srn</string>
     <string name="dollar_amount">%1$s$</string>
     <string name="readable_number">#,###,###</string>
     <string name="time_short">hh:mm a</string>
     <string name="preference_file_key">srn_widget</string>
+    <string name="precent">%,.2f%%</string>
 
 
 </resources>

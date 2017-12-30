@@ -22,14 +22,14 @@
         </activity>
 
         <service
-            android:name=".widget.PeriodricWidgetUpdateJobService"
+            android:name=".service.PeriodricWidgetUpdateJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <service
-            android:name=".widget.SingleWidgetUpdateIntentService"/>
+            android:name=".service.SingleWidgetUpdateIntentService"/>
 
 
-        <receiver android:name=".widget.CrowdsaleAppWidgetProvider">
+        <receiver android:name=".CrowdsaleAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>

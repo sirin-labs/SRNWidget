@@ -27,10 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         //TODO no need to fetch again, there is a dedicated service that fetch with intervals. we should use him (maybe PublishSubject)
-        fetchData()!!.observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { t: Disposable ->
-                    mDisposable = t
-                }
+        mDisposable = fetchData()!!.observeOn(AndroidSchedulers.mainThread())
                 .retry()
                 .repeatWhen { completed -> completed.delay(10, TimeUnit.SECONDS) }
                 .subscribeBy(onNext = { SirinValueResponse ->
@@ -48,9 +45,14 @@ class MainActivity : AppCompatActivity() {
                     sirin_total_supply.text = String.format(res.getString(R.string.srn_amount), amountFormatter.format(SirinValueResponse.body().srn_total_supply_wei.toDouble().toInt()))
                 }, onError = { Throwable ->
                     Log.e(MainActivity.TAG, Throwable.message)
-                }, onComplete = {
-                    mDisposable.dispose()
                 })
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG,"onPause")
+
+        mDisposable.dispose()
     }
 
     companion object {

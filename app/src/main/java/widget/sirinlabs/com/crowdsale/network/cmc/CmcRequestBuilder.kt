@@ -7,11 +7,11 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 /**
  * Created by yaron on 30/11/17.
  */
-class CMCRequestBuilder() {
+class CmcRequestBuilder{
 
     private val URL = "https://api.coinmarketcap.com"
 
-    private var requestService: CMCAPI? = null
+    private var requestService: CmcApi? = null
 
     init {
         val retrofit = Retrofit.Builder()
@@ -19,7 +19,7 @@ class CMCRequestBuilder() {
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build()
 
-        requestService = retrofit.create(CMCAPI::class.java)
+        requestService = retrofit.create(CmcApi::class.java)
     }
 
     fun getSRNTicker(): Call<List<TickerResponse>> {

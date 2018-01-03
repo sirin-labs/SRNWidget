@@ -6,7 +6,7 @@ package widget.sirinlabs.com.crowdsale.network.cmc
 import retrofit2.Call
 import retrofit2.http.GET
 
-interface CMCAPI {
+interface CmcApi {
     @GET("/v1/ticker/sirin-labs-token/")
     fun getSRNTicker()
             : Call<List<TickerResponse>>

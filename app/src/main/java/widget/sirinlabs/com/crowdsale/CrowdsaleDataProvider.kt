@@ -4,7 +4,7 @@ import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
-import widget.sirinlabs.com.crowdsale.network.cmc.CMCRequestBuilder
+import widget.sirinlabs.com.crowdsale.network.cmc.CmcRequestBuilder
 import widget.sirinlabs.com.crowdsale.network.cmc.TickerResponse
 import widget.sirinlabs.com.crowdsale.network.sirin.SirinRequestBuilder
 import widget.sirinlabs.com.crowdsale.network.sirin.ValuesResponse
@@ -27,7 +27,7 @@ fun fetchData(): Observable<Response<ValuesResponse>>? {
 
 fun fetchSRNticker(): Observable<Response<List<TickerResponse>>>? {
 
-    var observable = Observable.just(CMCRequestBuilder()).map { builder ->
+    var observable = Observable.just(CmcRequestBuilder()).map { builder ->
 
         val callResponse = builder.getSRNTicker()
         val response = callResponse.execute()
@@ -41,7 +41,7 @@ fun fetchSRNticker(): Observable<Response<List<TickerResponse>>>? {
 //TODO code dup
 fun fetchETHticker(): Observable<Response<List<TickerResponse>>>? {
 
-    var observable = Observable.just(CMCRequestBuilder()).map { builder ->
+    var observable = Observable.just(CmcRequestBuilder()).map { builder ->
 
         val callResponse = builder.getETHTicker()
         val response = callResponse.execute()

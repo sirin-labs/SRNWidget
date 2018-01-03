@@ -1,7 +1,5 @@
 package widget.sirinlabs.com.crowdsale
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -15,23 +13,23 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
+    //---------------------------------------- Members ---------------------------------------------
+
     private lateinit var mDisposable: Disposable
-    private lateinit var mSharedPref: SharedPreferences
+
+    //---------------------------------------- Overrides -------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val mSharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
     }
 
     override fun onResume() {
         super.onResume()
-        //TODO no need to fetch again, there is a dedicated service that fetch with intervals. we should use him (maybe PublishSubject)
         mDisposable = fetchData()!!.observeOn(AndroidSchedulers.mainThread())
                 .retry()
                 .repeatWhen { completed -> completed.delay(10, TimeUnit.SECONDS) }
                 .subscribeBy(onNext = { SirinValueResponse ->
-                    Log.d(TAG, "foo")
                     val res = resources
                     val amountFormatter = DecimalFormat(res.getString(R.string.readable_number))
                     val totalEther = SirinValueResponse.body().multisig_eth.toDouble() + SirinValueResponse.body().vault_eth.toDouble()
@@ -54,6 +52,8 @@ class MainActivity : AppCompatActivity() {
 
         mDisposable.dispose()
     }
+
+    //---------------------------------------- Companion -------------------------------------
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName

@@ -1,5 +1,5 @@
 <resources>
-    <string name="version_id">0.4</string>
+    <string name="version_id">0.7</string>
 
 
     //texts:
@@ -27,6 +27,7 @@
     <string name="srn_amount">%1$s srn</string>
     <string name="dollar_amount">%1$s$</string>
     <string name="readable_number">#,###,###</string>
+    <string name="readable_fraction">#,###,###.#####</string>
     <string name="time_short">hh:mm a</string>
     <string name="preference_file_key">srn_widget</string>
     <string name="precent">%,.2f%%</string>

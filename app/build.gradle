@@ -11,8 +11,8 @@ android {
         applicationId "crowdsale.com.sirinlabs.widget.sirinwidget"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

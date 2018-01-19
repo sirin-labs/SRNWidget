@@ -1,7 +1,4 @@
 <resources>
-    <string name="version_id">0.7</string>
-
-
     //texts:
     <string name="app_name">SirinLabs</string>
     <string name="version">version</string>

@@ -99,6 +99,7 @@ class SingleWidgetUpdateIntentService : IntentService(SingleWidgetUpdateIntentSe
         remoteViews.setTextColor(R.id.eth_in_usd, Color.WHITE)
         remoteViews.setTextColor(R.id.srn_text, Color.WHITE)
         remoteViews.setTextColor(R.id.srn_in_usd, Color.WHITE)
+        remoteViews.setTextColor(R.id.srn_in_ether, Color.WHITE)
     }
 
     private fun getTimerAnimationObservable(remoteViews: RemoteViews, appWidgetManager: AppWidgetManager?, thisWidget: ComponentName): Disposable {

@@ -9,6 +9,9 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
+import android.content.pm.PackageInfo
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,6 +37,9 @@ class MainActivity : AppCompatActivity() {
                     val amountFormatter = DecimalFormat(res.getString(R.string.readable_number))
                     val totalEther = SirinValueResponse.body().multisig_eth.toDouble() + SirinValueResponse.body().vault_eth.toDouble()
 
+                    val info = getPackageManager().getPackageInfo(this.packageName, 0)
+
+                    version_modifier.text = info.versionName
                     eth_in_usd.text = String.format(res.getString(R.string.dollar_amount), amountFormatter.format(SirinValueResponse.body().ethusd.toDouble().toInt()).toString())
                     total_in_usd.text = String.format(res.getString(R.string.dollar_amount), SirinValueResponse.body().value)
                     ether_raised.text = String.format(res.getString(R.string.eth_amount), amountFormatter.format(totalEther.toInt()).toString())

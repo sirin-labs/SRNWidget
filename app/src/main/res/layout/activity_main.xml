@@ -182,7 +182,6 @@
             android:id="@+id/version_modifier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/version_id"
             android:textColor="@android:color/white"/>
     </LinearLayout>
 

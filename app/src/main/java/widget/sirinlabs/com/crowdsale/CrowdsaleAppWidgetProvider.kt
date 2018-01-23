@@ -14,11 +14,17 @@ import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import widget.sirinlabs.com.crowdsale.network.cmc.TickerResponse
 import widget.sirinlabs.com.crowdsale.service.PeriodricWidgetUpdateJobService
 import widget.sirinlabs.com.crowdsale.service.SingleWidgetUpdateIntentService
 import java.text.DecimalFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -28,16 +34,17 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
 
     //---------------------------------------- Members ---------------------------------------------
 
-    private val TAG: String = "CrowdsaleAppWidget"
     private val JOB_ID: Int = 1001
-    private var mUpdateInterval: Int = 0
+    private var mUpdateInterval: Long = 0
+    private var mProgressMax: Int = 0
+
 
     //---------------------------------------- Overrides -------------------------------------------
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         Log.d(TAG, "onUpdate")
-        mUpdateInterval = context!!.resources.getInteger(R.integer.update_interval) * 1000
+        mUpdateInterval = context!!.resources.getInteger(R.integer.update_interval) * 1000L
         fetchData(context)
         startPeriodicUpdates(context)
         setClick(context, appWidgetManager)
@@ -47,10 +54,14 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         super.onReceive(context, intent)
         Log.d(TAG, "onReceive, action :" + intent?.action)
 
+        mProgressMax = context!!.resources.getInteger(R.integer.update_interval)
+
         if (MY_WIDGET_UPDATE == intent.action) {
             val remoteViews = RemoteViews(context.packageName, R.layout.app_widget)
             val srnTickerResponse = intent.extras.get("srnTickerResponse") as TickerResponse
             val ethTickerResponse = intent.extras.get("ethTickerResponse") as TickerResponse
+
+            remoteViews.setViewVisibility(R.id.animating_bar, View.VISIBLE)
 
             val res = context.resources
 
@@ -65,7 +76,7 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
             val thisWidget = ComponentName(context, CrowdsaleAppWidgetProvider::class.java)
 
             if (srnTickerResponse != null && ethTickerResponse != null) {
-                    setSrnToEther(srnTickerResponse.price_usd.toDouble(), ethTickerResponse.price_usd.toDouble(), remoteViews, res)
+                    setSrnToEther(srnTickerResponse, ethTickerResponse, remoteViews, res)
             }
 
             fixColorBug(remoteViews)
@@ -73,6 +84,9 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
             setClick(context, appWidgetManager)
 
             appWidgetManager!!.updateAppWidget(thisWidget, remoteViews)
+
+            (context.applicationContext as SRNWidgetApp).mTimerAnimationDisposable?.dispose()
+            (context.applicationContext as SRNWidgetApp).mTimerAnimationDisposable = getTimerAnimationObservable(remoteViews, appWidgetManager, thisWidget, context.applicationContext as SRNWidgetApp)
         }
 
     }
@@ -115,10 +129,17 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         pending.send()
     }
 
-    private fun setSrnToEther(srnPriceUsd: Double, etherPriceUsd: Double, remoteViews: RemoteViews, res: Resources?) {
-        val srnInEther = srnPriceUsd / etherPriceUsd
+    private fun setSrnToEther(srnPriceUsd: TickerResponse, etherPriceUsd: TickerResponse, remoteViews: RemoteViews, res: Resources?) {
+        val srnInEther = srnPriceUsd.price_usd.toDouble() / etherPriceUsd.price_usd.toDouble()
+        val srnToEtherChange = srnPriceUsd.percent_change_24h.toDouble() - etherPriceUsd.percent_change_24h.toDouble()
         val amountFormatter = DecimalFormat(res?.getString(R.string.readable_fraction))
-        remoteViews.setTextViewText(R.id.srn_in_ether, kotlin.String.format(res!!.getString(R.string.eth_amount), amountFormatter.format(srnInEther)).toString())
+        remoteViews.setTextViewText(R.id.srn_in_ether, amountFormatter.format(srnInEther))
+        remoteViews.setTextViewText(R.id.srn_in_ether_change, kotlin.String.format(res!!.getString(R.string.precent), srnToEtherChange.toFloat()))
+        if (srnToEtherChange > 0) {
+            remoteViews.setTextColor(R.id.srn_in_ether_change, Color.GREEN)
+        } else {
+            remoteViews.setTextColor(R.id.srn_in_ether_change, Color.RED)
+        }
         remoteViews.setViewVisibility(R.id.srn_to_ether, View.VISIBLE)
 
     }
@@ -133,7 +154,6 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
             remoteViews.setTextColor(R.id.eth_change, Color.RED)
         }
         remoteViews.setViewVisibility(R.id.ether, View.VISIBLE)
-        remoteViews.setTextViewText(R.id.update_time, DateFormat.format(res!!.getString(R.string.time_short), Date()))
     }
 
     private fun updateSRNUi(tickerResponse: TickerResponse, remoteViews: RemoteViews, res: Resources) {
@@ -148,7 +168,6 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         remoteViews.setTextViewText(R.id.circulation, kotlin.String.format(res!!.getString(R.string.dollar_amount), amountFormatter.format(tickerResponse.volume_usd.toDouble()).toString()))
         remoteViews.setViewVisibility(R.id.srn, View.VISIBLE)
         remoteViews.setViewVisibility(R.id.total_supply, View.VISIBLE)
-        remoteViews.setTextViewText(R.id.update_time, DateFormat.format(res!!.getString(R.string.time_short), Date()))
     }
 
     private fun fixColorBug(remoteViews: RemoteViews) {
@@ -157,7 +176,24 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         remoteViews.setTextColor(R.id.srn_text, Color.WHITE)
         remoteViews.setTextColor(R.id.srn_in_usd, Color.WHITE)
         remoteViews.setTextColor(R.id.srn_in_ether, Color.WHITE)
-        remoteViews.setTextColor(R.id.srn_in_ether_txt, Color.WHITE)
+        remoteViews.setTextColor(R.id.srn_in_ether_srn, Color.WHITE)
+        remoteViews.setTextColor(R.id.srn_in_ether_ether, Color.WHITE)
+    }
+
+    private fun getTimerAnimationObservable(remoteViews: RemoteViews, appWidgetManager: AppWidgetManager?, thisWidget: ComponentName, applicationContext: SRNWidgetApp): Disposable {
+        return Observable.interval(1, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy { l ->
+                    Log.d(TAG, "mProgressMax: " + mProgressMax + ", l: " + l + ", timer: " + (mProgressMax - l.toInt()).toString())
+                    remoteViews.setProgressBar(R.id.animating_bar, mProgressMax, mProgressMax - l.toInt(), false)
+                    appWidgetManager!!.updateAppWidget(thisWidget, remoteViews)
+
+                    if (l >= mProgressMax) {
+                        Log.d(TAG, "stop itter")
+                        applicationContext.mTimerAnimationDisposable?.dispose()
+                    }
+                }
     }
     //---------------------------------------- Companion -------------------------------------
 

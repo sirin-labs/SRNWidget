@@ -3,14 +3,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-
     <ImageView
         android:id="@+id/frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
-        android:src="@drawable/token_simplified"/>
+        android:src="@drawable/srn_cover"/>
+
     <ProgressBar
         android:id="@+id/animating_bar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -20,15 +20,15 @@
         android:max="40"
         android:progress="40"
         android:progressDrawable="@drawable/circle"
-        android:progressBackgroundTint="@android:color/white"
-        android:progressTint="@color/colorAccent"/>
+        android:progressTint="@color/colorAccent"
+        android:visibility="invisible"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_centerInParent="true"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/ether"
@@ -110,14 +110,33 @@
             android:orientation="horizontal"
             android:visibility="invisible">
 
-            <TextView
-                android:id="@+id/srn_in_ether_txt"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:gravity="bottom"
-                android:text="@string/eth"
-                android:textSize="@dimen/text_small"/>
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/srn_in_ether_srn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom"
+                    android:text="@string/srn"
+                    android:textSize="@dimen/text_extra_small"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#ffffff"/>
+
+                <TextView
+                    android:id="@+id/srn_in_ether_ether"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:text="@string/eth"
+                    android:textSize="@dimen/text_extra_small"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/srn_in_ether"
@@ -128,6 +147,16 @@
                 android:layout_marginStart="2dp"
                 android:gravity="bottom"
                 android:textSize="@dimen/text_big"/>
+
+            <TextView
+                android:id="@+id/srn_in_ether_change"
+                style="?android:attr/textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="2dp"
+                android:gravity="bottom"
+                android:textSize="@dimen/text_small"/>
 
             <TextView
                 android:id="@+id/srn_ether_change"
@@ -166,16 +195,6 @@
                 android:textSize="@dimen/text_small"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/update_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:gravity="center"
-            android:text="@string/please_wait"
-            android:textColor="@android:color/background_light"
-            android:textSize="@dimen/text_small"
-            android:visibility="gone"/>
     </LinearLayout>
 
 

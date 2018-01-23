@@ -19,7 +19,7 @@ class PeriodricWidgetUpdateJobService : JobService() {
 
     //---------------------------------------- Members ---------------------------------------------
 
-    private var mUpdateInterval: Int = 0
+    private var mUpdateInterval: Long = 0
     private var mJobId: Int = 0
 
     //---------------------------------------- Overrides -------------------------------------------
@@ -36,8 +36,8 @@ class PeriodricWidgetUpdateJobService : JobService() {
     //---------------------------------------- Overrides -------------------------------------------
 
     private fun firstInit() {
-        if (mUpdateInterval == 0) {
-            mUpdateInterval = (applicationContext!!.resources.getInteger(R.integer.update_interval) * 1000 * 1.1).toInt()
+        if (mUpdateInterval == 0L) {
+            mUpdateInterval = applicationContext!!.resources.getInteger(R.integer.update_interval) * 1000L
         }
         if (mJobId == 0) {
             mJobId = applicationContext!!.resources.getInteger(R.integer.periodric_job_id)

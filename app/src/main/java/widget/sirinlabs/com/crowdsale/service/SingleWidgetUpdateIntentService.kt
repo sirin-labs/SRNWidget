@@ -1,11 +1,13 @@
 package widget.sirinlabs.com.crowdsale.service
 
 import android.app.IntentService
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
+import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
@@ -21,6 +23,7 @@ import widget.sirinlabs.com.crowdsale.network.cmc.TickerResponse
 import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 
 /**
@@ -62,29 +65,18 @@ class SingleWidgetUpdateIntentService : IntentService(SingleWidgetUpdateIntentSe
             Pair(SRNtickerResponse, ETHtickerResponse)
         }).doOnSubscribe { disposable -> mDisposable = disposable }
                 .subscribeBy(onNext = { pair ->
-                    val res = resources
                     val srnTickerResponse = pair.first
                     val ethTickerResponse = pair.second
-
-                    if (srnTickerResponse.isSuccessful) {
-                        Log.d(TAG, "ticker response is successful, srn: " + ethTickerResponse.body().get(0).price_usd)
-                        updateSRNUi(srnTickerResponse, remoteViews, res)
-                    } else {
-                        Log.d(TAG, "srn  ticker response is not successful")
-                        return@subscribeBy
-                    }
-                    if (ethTickerResponse.isSuccessful) {
-                        Log.d(TAG, "ticker response is successful, eth: " + ethTickerResponse.body().get(0).price_usd)
-                        updateETHUi(ethTickerResponse, remoteViews, res)
-
-                    } else {
-                        Log.d(TAG, "eth ticker response is not successful")
+                    if (!srnTickerResponse.isSuccessful || !ethTickerResponse.isSuccessful) {
                         return@subscribeBy
                     }
 
-                    setSrnToEther(srnTickerResponse.body().get(0).price_usd.toDouble(), ethTickerResponse.body().get(0).price_usd.toDouble(), remoteViews, res)
-                    fixColorBug(remoteViews)
-                    appWidgetManager!!.updateAppWidget(widgetId, remoteViews)
+                    val broadcastIntent = Intent(applicationContext, CrowdsaleAppWidgetProvider::class.java)
+                    broadcastIntent.putExtra("srnTickerResponse",srnTickerResponse.body()[0])
+                    broadcastIntent.putExtra("ethTickerResponse",ethTickerResponse.body()[0])
+                    broadcastIntent.action = CrowdsaleAppWidgetProvider.MY_WIDGET_UPDATE
+                    val pending = PendingIntent.getBroadcast(applicationContext, 0, broadcastIntent, 0)
+                    pending.send()
 
                 }, onError = { Throwable ->
                     Log.e(TAG, Throwable.message)
@@ -92,14 +84,6 @@ class SingleWidgetUpdateIntentService : IntentService(SingleWidgetUpdateIntentSe
                     Log.d(TAG, "onComplete -> disposing")
                     mDisposable.dispose()
                 })
-    }
-
-    private fun fixColorBug(remoteViews: RemoteViews) {
-        remoteViews.setTextColor(R.id.eth_text, Color.WHITE)
-        remoteViews.setTextColor(R.id.eth_in_usd, Color.WHITE)
-        remoteViews.setTextColor(R.id.srn_text, Color.WHITE)
-        remoteViews.setTextColor(R.id.srn_in_usd, Color.WHITE)
-        remoteViews.setTextColor(R.id.srn_in_ether, Color.WHITE)
     }
 
     private fun getTimerAnimationObservable(remoteViews: RemoteViews, appWidgetManager: AppWidgetManager?, thisWidget: ComponentName): Disposable {
@@ -117,45 +101,6 @@ class SingleWidgetUpdateIntentService : IntentService(SingleWidgetUpdateIntentSe
                         (applicationContext as SRNWidgetApp).mTimerAnimationDisposable?.dispose()
                     }
                 }
-    }
-
-    private fun setSrnToEther(srnPriceUsd: Double, etherPriceUsd: Double, remoteViews: RemoteViews, res: Resources?) {
-        val srnInEther = srnPriceUsd / etherPriceUsd
-        val amountFormatter = DecimalFormat(res?.getString(R.string.readable_fraction))
-        remoteViews.setTextViewText(R.id.srn_in_ether, kotlin.String.format(res!!.getString(R.string.eth_amount), amountFormatter.format(srnInEther)).toString())
-        remoteViews.setViewVisibility(R.id.srn_to_ether, View.VISIBLE)
-
-    }
-
-    private fun updateETHUi(etherTickerResponse: Response<List<TickerResponse>>, remoteViews: RemoteViews, res: Resources?) {
-        val ticker = etherTickerResponse.body().get(0)
-        Log.d(TAG, "srn:$:" + ticker.price_usd)
-        remoteViews.setTextViewText(R.id.eth_in_usd, kotlin.String.format(res!!.getString(R.string.in_usd_format), ticker.price_usd.toDouble()))
-        remoteViews.setTextViewText(R.id.eth_change, kotlin.String.format(res!!.getString(R.string.precent), ticker.percent_change_24h.toFloat()))
-        if (ticker.percent_change_24h.toDouble() > 0) {
-            remoteViews.setTextColor(R.id.eth_change, Color.GREEN)
-        } else {
-            remoteViews.setTextColor(R.id.eth_change, Color.RED)
-        }
-        remoteViews.setViewVisibility(R.id.ether, View.VISIBLE)
-        remoteViews.setTextViewText(R.id.update_time, DateFormat.format(res!!.getString(R.string.time_short), Date()))
-    }
-
-    private fun updateSRNUi(tickerResponse: Response<List<TickerResponse>>, remoteViews: RemoteViews, res: Resources?) {
-        val ticker = tickerResponse.body().get(0)
-        Log.d(TAG, "srn:$:" + ticker.price_usd)
-        remoteViews.setTextViewText(R.id.srn_in_usd, kotlin.String.format(res!!.getString(R.string.in_usd_long_format), ticker.price_usd.toDouble()))
-        remoteViews.setTextViewText(R.id.srn_change, kotlin.String.format(res!!.getString(R.string.precent), ticker.percent_change_24h.toFloat()))
-        if (ticker.percent_change_24h.toDouble() > 0) {
-            remoteViews.setTextColor(R.id.srn_change, Color.GREEN)
-        } else {
-            remoteViews.setTextColor(R.id.srn_change, Color.RED)
-        }
-        val amountFormatter = DecimalFormat(res.getString(R.string.readable_number))
-        remoteViews.setTextViewText(R.id.circulation, kotlin.String.format(res!!.getString(R.string.dollar_amount), amountFormatter.format(ticker.volume_usd.toDouble()).toString()))
-        remoteViews.setViewVisibility(R.id.srn, View.VISIBLE)
-        remoteViews.setViewVisibility(R.id.total_supply, View.VISIBLE)
-        remoteViews.setTextViewText(R.id.update_time, DateFormat.format(res!!.getString(R.string.time_short), Date()))
     }
 
     //---------------------------------------- Companion -------------------------------------

@@ -27,4 +27,8 @@
 
     </style>
 
+    <style name="progressBarStyle" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:indeterminateDrawable">@drawable/circle</item>
+    </style>
+
 </resources>

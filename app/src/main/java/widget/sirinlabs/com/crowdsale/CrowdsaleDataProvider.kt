@@ -30,9 +30,8 @@ fun fetchSRNticker(): Observable<Response<List<TickerResponse>>>? {
     var observable = Observable.just(CmcRequestBuilder()).map { builder ->
 
         val callResponse = builder.getSRNTicker()
-        val response = callResponse.execute()
 
-        return@map response
+        return@map callResponse.execute()
     }.subscribeOn(Schedulers.newThread()).doOnError { Log.e("fetchTicker", it.message) }
 
     return observable
@@ -41,13 +40,10 @@ fun fetchSRNticker(): Observable<Response<List<TickerResponse>>>? {
 //TODO code dup
 fun fetchETHticker(): Observable<Response<List<TickerResponse>>>? {
 
-    var observable = Observable.just(CmcRequestBuilder()).map { builder ->
+    return Observable.just(CmcRequestBuilder()).map { builder ->
 
         val callResponse = builder.getETHTicker()
-        val response = callResponse.execute()
 
-        return@map response
+        return@map callResponse.execute()
     }.subscribeOn(Schedulers.newThread()).doOnError { Log.e("fetchTicker", it.message) }
-
-    return observable
 }

@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
@@ -23,7 +22,6 @@ import widget.sirinlabs.com.crowdsale.network.cmc.TickerResponse
 import widget.sirinlabs.com.crowdsale.service.PeriodricWidgetUpdateJobService
 import widget.sirinlabs.com.crowdsale.service.SingleWidgetUpdateIntentService
 import java.text.DecimalFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -110,7 +108,7 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
         val remoteViews = RemoteViews(context?.packageName, R.layout.app_widget)
         val serviceIntent = Intent(context, SingleWidgetUpdateIntentService::class.java)
         val pendingIntent = PendingIntent.getService(context, 0, serviceIntent, 0)
-        remoteViews.setOnClickPendingIntent(R.id.animating_bar, pendingIntent)
+        remoteViews.setOnClickPendingIntent(R.id.refresh_interceptor, pendingIntent)
         val thisWidget = ComponentName(context, CrowdsaleAppWidgetProvider::class.java)
         appWidgetManager?.updateAppWidget(thisWidget, remoteViews)
     }
@@ -118,7 +116,7 @@ class CrowdsaleAppWidgetProvider : AppWidgetProvider() {
     private fun startPeriodicUpdates(context: Context?) {
         val serviceComponent = ComponentName(context, PeriodricWidgetUpdateJobService::class.java)
         val jobInfo: JobInfo = JobInfo.Builder(JOB_ID, serviceComponent)
-                .setMinimumLatency(mUpdateInterval.toLong()).build()
+                .setMinimumLatency(mUpdateInterval).build()
         val jobScheduler = context?.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         jobScheduler.schedule(jobInfo)
     }
